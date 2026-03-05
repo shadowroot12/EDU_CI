@@ -14,6 +14,21 @@ export async function login(username: string, password: string) {
   return res.json();
 }
 
+export async function register(userData: any) {
+  const res = await fetch(`${API_URL}/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(userData),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.message || 'Échec de l\'inscription');
+  }
+
+  return res.json();
+}
+
 export function setToken(token: string) {
   localStorage.setItem('edu_token', token);
 }
