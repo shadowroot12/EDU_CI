@@ -3,6 +3,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from '../users/dto/create-user.dto';
+import { UserRole } from '../users/enums/user-role.enum';
 
 @Injectable()
 export class AuthService {
@@ -32,7 +33,14 @@ export class AuthService {
     if (existingUser) {
       throw new ConflictException('Username already exists');
     }
-    const user = await this.usersService.create(createUserDto);
+
+    // Assign a default role
+    const userToCreate: CreateUserDto = {
+      ...createUserDto,
+      role: UserRole.ENSEIGNANT, // Default role for new registrations
+    };
+
+    const user = await this.usersService.create(userToCreate);
     // Exclude password hash from the result
     const { password_hash, ...result } = user;
     return result;
